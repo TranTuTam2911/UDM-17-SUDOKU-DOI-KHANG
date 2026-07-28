@@ -1,1 +1,1 @@
-# Game-Caro-tr-c-tuy-n
+# Game-Caro-truc-tuyen
