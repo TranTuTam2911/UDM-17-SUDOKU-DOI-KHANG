@@ -8,7 +8,7 @@
 | :--- | :--- |
 | **Repository** | https://github.com/TranTuTam2911/UDM-17-SUDOKU-DOI-KHANG |
 | **Course** | Network Programming |
-| **Group** | UDM12 — Group 9 |
+| **Group** | UDM17 — Group 9 |
 | **Target Framework** |  |
 | **Demo / Video** |  |
 
