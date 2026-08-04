@@ -30,14 +30,4 @@
 ## Project Architecture
 
 NP_NetGroup9_UDM17/
-├── Code/
-│   ├── 
-│   ├── 
-│   ├── 
-│   └── 
-├── Extra/
-│   ├── 
-│   └── 
-├── DOCX/                                 # Project documentation (Word)
-├── PPTX/                                 # Presentation slides
-└── README.md
+
