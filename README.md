@@ -1,6 +1,6 @@
 # Multiplayer Sudoku Game
 
-A real-time competitive multiplayer Sudoku game built with Python. The application features a Python GUI client (Pygame/Tkinter) and a high-performance asynchronous TCP/IP socket server, supporting real-time matchmaking, live progress tracking, room management, and cross-platform deployment.
+A real-time competitive multiplayer Sudoku game system based on Client-Server architecture using Python TCP Sockets (asyncio / selectors). The application supports real-time matchmaking, 1v1 challenges, live Spectator Mode, and concurrent management of multiple game rooms.
 
 ---
 
