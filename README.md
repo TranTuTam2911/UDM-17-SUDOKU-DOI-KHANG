@@ -1,49 +1,77 @@
-# Multiplayer Sudoku Game
+# [ UDM_17 ] - [ Game Sudoku đối kháng ]
 
-A real-time competitive multiplayer Sudoku game system based on Client-Server architecture using Python TCP Sockets (asyncio / selectors). The application supports real-time matchmaking, 1v1 challenges, live Spectator Mode, and concurrent management of multiple game rooms.
+## Thành viên
 
----
+| STT | MSSV | Họ và tên | Vai trò |
+|---:|---|---|---|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+| 5 | | | |
+| 6 | | | |
 
-## Repository
+## Giới thiệu
 
-| | |
-|---|---|
-| **Repository** | https://github.com/TranTuTam2911/UDM-17-SUDOKU-DOI-KHANG |
-| **Course** | Network Programming |
-| **Group** | UDM17 — Group 9 |
-| **Target Runtime** |  |
-| **Video** | |
+Mô tả ngắn mục tiêu, đối tượng sử dụng và phạm vi đề tài.
 
----
+## Kiến trúc hệ thống
 
-## Team Members
+- Mô hình: Client–Server / P2P / Khác
+- Protocol:
+- Port mặc định:
+- Cấu trúc message:
 
-| No. | Name | Role |
-|-----|------|------|
-| 1 |  | Team Leader |
-| 2 |  | Developer |
-| 3 |  | Developer |
-| 4 |  | Developer |
-| 5 |  | Developer |
-| 6 | Nguyễn Hoài Vũ | Developer |
+## Yêu cầu môi trường
 
----
+- Hệ điều hành:
+- Ngôn ngữ và phiên bản:
+- Công cụ hoặc dependency:
 
-## Architecture
+## Cài đặt
 
-```
-NP_NetGroup11_UDM12/
-├── Code/
-│   ├── sudoku_shared/            # Shared protocols, Sudoku generator, and constants
-│   ├── sudoku_server/            # Socket TCP server & matchmaker engine
-│   ├── sudoku_client/            # Game GUI client (Pygame / Tkinter)
-│   └── sudoku_stress_test/       # Automated bot clients & concurrency test scripts
-├── Extra/
-│   ├── Documentation/            # Deployment and server setup guides
-│   └── Test report/              # Concurrency & latency test reports
-├── DOCX/                         # Project documentation (Word)
-├── PPTX/                         # Presentation slides
-└── README.md
+Mô tả các bước cài đặt dependency và cấu hình môi trường.
+
+## Hướng dẫn chạy
+
+### Server
+
+```text
+Lệnh hoặc các bước chạy Server
 ```
 
----
+### Client
+
+```text
+Lệnh hoặc các bước chạy Client
+```
+
+## Cấu hình
+
+Mô tả cách thay đổi IP, port và các tham số mạng. Không ghi password hoặc secret vào repository.
+
+## Chức năng
+
+- [ ] Chức năng 1
+- [ ] Chức năng 2
+- [ ] Chức năng 3
+
+## Kiểm thử
+
+- Functional test:
+- Test dữ liệu không hợp lệ:
+- Test mất kết nối:
+- Stress test:
+- Performance test:
+
+Bằng chứng kiểm thử lưu tại `Extra/`.
+
+## Demo
+
+- Video: [Public hoặc Unlisted URL]
+- Slide: `PPTX/`
+- Báo cáo: `DOCX/`
+
+## Giới hạn
+
+Liệt kê chức năng chưa hỗ trợ và giới hạn hiện tại của sản phẩm.
