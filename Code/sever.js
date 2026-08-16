@@ -42,14 +42,46 @@ wss.on("conection",(player) => {
         playerName: data.playerName,
         player: player
       };
+      socket.playerId = data.playerId;
+      sockeet.send(JSON.stringify({
+        type: "Đăng Nhập Thành Công",
+        playerId: data.playerId,
+        playerName: data.playerName
+      }));
       console.log("Người chơi đã đăng nhập:", data.playerId);
-    } else if (data.type === "Tạo Phòng") {
-      const roomId = data.roomId;
-      rooms[roomId] = {
-        roomId: data.roomId,
-        players: []
-      };
-      console.log("Phòng đã được tạo:", data.roomId);
+sendRoomList();
     }
+     if (data.type === "Tạo Phòng") {
+      const roomId = Math.floor(Math.random() * 10000).toString();
+      rooms[roomId] = {
+        roomId: roomId,
+        players: [data.playerId]
+      };
+      status = "Đang Chờ";
+      console.log("Phòng đã được tạo:", roomId);
+      sendRoomList();
+
+    }
+    if (data.type === "Tham Gia Phòng") {
+      const roomId = data.roomId;
+      if (rooms[roomId]) {
+        rooms[roomId].players.push(data.playerId);
+        console.log("Người chơi đã tham gia phòng:", roomId);
+        sendRoomList();
+      }
+    }
+    if(!rooms[data.roomId]) {
+      player.send(JSON.stringify({
+        type: "Phòng Không Tồn Tại"
+      }));
+      return;
+    }
+    if (rooms[data.roomId].players.length === 2) {
+      rooms[data.roomId].status = "Đang chơi";
+      console.log("Phòng đã bắt đầu:", data.roomId);
+      sendRoomList();
+    }
+    return;
+    rooms[data.roomId].players.forEach((playerId) => {
   });
 });
