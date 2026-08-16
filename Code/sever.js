@@ -83,5 +83,3 @@ sendRoomList();
     }
     return;
     rooms[data.roomId].players.forEach((playerId) => {
-  });
-});
