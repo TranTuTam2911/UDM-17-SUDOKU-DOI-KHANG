@@ -37,5 +37,19 @@ wss.on("conection",(player) => {
   player.on("message", (message) => {
     const data = JSON.parse(message);
     if (data.type === "Đăng Nhập") {
-      players[dât.playerId] = {
-        
+      players[data.playerId] = {
+        playerId: data.playerId,
+        playerName: data.playerName,
+        player: player
+      };
+      console.log("Người chơi đã đăng nhập:", data.playerId);
+    } else if (data.type === "Tạo Phòng") {
+      const roomId = data.roomId;
+      rooms[roomId] = {
+        roomId: data.roomId,
+        players: []
+      };
+      console.log("Phòng đã được tạo:", data.roomId);
+    }
+  });
+});
