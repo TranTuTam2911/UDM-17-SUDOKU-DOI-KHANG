@@ -24,6 +24,18 @@ const contentTypes = {
     res.writeHead(200, {
       "content-Type";
       contentTypes[ext] 
-  });
-  res.end(data);
-  
+     });
+     res.end(data);
+   });
+});
+const wss = new WebSoket.Sever({
+  sever
+});
+const rooms = {};
+const players = {};
+wss.on("conection",(player) => {
+  console.log("Đã có người tham gia");
+  player.on("message", (message) => {
+    const data = JSON.parse(message);
+    if (data.type === "Đăng Nhập") {
+      players[dât.playerId] = {
