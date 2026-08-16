@@ -15,18 +15,17 @@ const contentTypes = {
   ".css": "text/css",
   ".js":"text/javascript"
 };
-  fs.readFile(filePath, (err, data) => {{
+  fs.readFile(filePath, (err, data) => {
     if (err) {
       res.writeHead(404);
       res.end("Not Found");
       return;
     }
     res.writeHead(200, {
-      "content-Type";
-      contentTypes[ext] 
-     });
-     res.end(data);
-   });
+      "content-Type": contentTypes[ext]
+    });
+    res.end(data);
+  });
 });
 const wss = new WebSoket.Sever({
   sever
@@ -39,3 +38,4 @@ wss.on("conection",(player) => {
     const data = JSON.parse(message);
     if (data.type === "Đăng Nhập") {
       players[dât.playerId] = {
+        
