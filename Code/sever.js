@@ -83,3 +83,55 @@ sendRoomList();
     }
     return;
     rooms[data.roomId].players.forEach((playerId) => {
+  });
+});
+sendRoomList();
+      room.players.forEach(playerId => {
+      const player =
+      players[playerId];
+        if (player) {
+      player.socket.send(
+        JSON.stringify({
+      type: "Cập nhật Phòng",
+      roomId: room.id,
+      players: room.players,
+      status: room.status
+           })
+         );
+       }
+   });
+  });
+  socket.on("close", () => {
+  console.log(
+  "Người chơi đã rời khỏi"
+        );
+    });
+function sendRoomList() {
+    const roomList =
+        Object.values(rooms).map(room => ({
+            id: room.id,
+            players:
+                room.players.length,
+            status:
+                room.status
+        }));
+    const message =
+        JSON.stringify({
+            type: "Cập nhật Phòng",
+            rooms: roomList
+        });
+    Object.values(players).forEach(player => {
+        if (
+            player.socket.readyState ===
+            WebSocket.OPEN
+        ) {
+            player.socket.send(message);
+        }
+    });
+}
+ server.listen(8080, () => {
+ console.log(
+  "Server chạy tại ....."
+    );
+
+});
