@@ -1,20 +1,21 @@
 const http = require("http");
-const fs = require("fs")
-const path = require("path")
-const Websocket = require("ws")
-const sever = http.createServer((req,res) => {
+const fs = require("fs");
+const path = require("path");
+const WebSocket = require("ws");
+
+const server = http.createServer((req, res) => {
   let filePath = "";
-  if(req.url === "/") {
+  if (req.url === "/") {
     filePath = "./index.html";
   } else {
-    filePath = "." +req.url;
+    filePath = "." + req.url;
   }
-const ext = path.extname(filePath)
-const contentTypes = {
-  ".html": "text/html",
-  ".css": "text/css",
-  ".js":"text/javascript"
-};
+  const ext = path.extname(filePath);
+  const contentTypes = {
+    ".html": "text/html",
+    ".css": "text/css",
+    ".js": "text/javascript"
+  };
   fs.readFile(filePath, (err, data) => {
     if (err) {
       res.writeHead(404);
@@ -22,17 +23,25 @@ const contentTypes = {
       return;
     }
     res.writeHead(200, {
-      "content-Type": contentTypes[ext]
+      "Content-Type": contentTypes[ext] || "text/plain"
     });
     res.end(data);
   });
 });
-const wss = new WebSoket.Sever({
-  sever
+
+const wss = new WebSocket.Server({
+  server
 });
+
 const rooms = {};
 const players = {};
-wss.on("conection",(player) => {
+
+// Stub function to prevent runtime crash since it is referenced in the original file but was not defined
+function sendRoomList() {
+  console.log("Gửi danh sách phòng...");
+}
+
+wss.on("connection", (player) => {
   console.log("Đã có người tham gia");
   player.on("message", (message) => {
     const data = JSON.parse(message);
@@ -42,25 +51,24 @@ wss.on("conection",(player) => {
         playerName: data.playerName,
         player: player
       };
-      socket.playerId = data.playerId;
-      sockeet.send(JSON.stringify({
+      player.playerId = data.playerId;
+      player.send(JSON.stringify({
         type: "Đăng Nhập Thành Công",
         playerId: data.playerId,
         playerName: data.playerName
       }));
       console.log("Người chơi đã đăng nhập:", data.playerId);
-sendRoomList();
+      sendRoomList();
     }
-     if (data.type === "Tạo Phòng") {
+    if (data.type === "Tạo Phòng") {
       const roomId = Math.floor(Math.random() * 10000).toString();
       rooms[roomId] = {
         roomId: roomId,
-        players: [data.playerId]
+        players: [data.playerId],
+        status: "Đang Chờ"
       };
-      status = "Đang Chờ";
       console.log("Phòng đã được tạo:", roomId);
       sendRoomList();
-
     }
     if (data.type === "Tham Gia Phòng") {
       const roomId = data.roomId;
@@ -70,7 +78,7 @@ sendRoomList();
         sendRoomList();
       }
     }
-    if(!rooms[data.roomId]) {
+    if (!rooms[data.roomId]) {
       player.send(JSON.stringify({
         type: "Phòng Không Tồn Tại"
       }));
@@ -83,3 +91,7 @@ sendRoomList();
     }
     return;
     rooms[data.roomId].players.forEach((playerId) => {
+      // Logic for each player
+    });
+  });
+});
