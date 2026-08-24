@@ -288,3 +288,4 @@ class SudokuScoring:
 
     def get_errors(self):
         return self.errors
+
