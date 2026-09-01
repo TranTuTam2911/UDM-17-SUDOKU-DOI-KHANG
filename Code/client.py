@@ -1,637 +1,193 @@
 import socket
 import threading
 import json
+import os
 
+HOST = "127.0.0.1"
+PORT = 5000
 
-# ============================================================
-# CẤU HÌNH
-# ============================================================
-
-SERVER_IP = "127.0.0.1"
-SERVER_PORT = 5000
-
-
-# ============================================================
-# BIẾN CLIENT
-# ============================================================
-
-client = None
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 running = True
-username = None
-
-
-# ============================================================
-# GỬI JSON
-# ============================================================
-
-def send_json(data):
-
-    try:
-
-        message = json.dumps(
-            data,
-            ensure_ascii=False
-        ) + "\n"
-
-        client.sendall(
-            message.encode("utf-8")
-        )
-
-    except Exception as e:
-
-        print(
-            "Không thể gửi dữ liệu:",
-            e
-        )
-
-
-# ============================================================
-# NHẬN DỮ LIỆU
-# ============================================================
-
-def receive_messages():
-
-    global running
-
-    buffer = ""
-
-    while running:
-
-        try:
-
-            data = client.recv(4096)
-
-            if not data:
-
-                print(
-                    "\nServer đã ngắt kết nối."
-                )
-
-                running = False
-                break
-
-            buffer += data.decode(
-                "utf-8"
-            )
-
-            # Xử lý từng message
-            while "\n" in buffer:
-
-                line, buffer = buffer.split(
-                    "\n",
-                    1
-                )
-
-                if not line.strip():
-                    continue
-
-                try:
-
-                    message = json.loads(
-                        line
-                    )
-
-                    handle_server_message(
-                        message
-                    )
-
-                except json.JSONDecodeError:
-
-                    print(
-                        "Nhận JSON không hợp lệ."
-                    )
-
-        except ConnectionResetError:
-
-            print(
-                "\nMất kết nối Server."
-            )
-
-            running = False
-            break
-
-        except Exception as e:
-
-            if running:
-
-                print(
-                    "\nLỗi nhận dữ liệu:",
-                    e
-                )
-
-            break
-
-
-# ============================================================
-# XỬ LÝ MESSAGE TỪ SERVER
-# ============================================================
-
-def handle_server_message(data):
-
-    message_type = data.get(
-        "type"
-    )
-
-    # --------------------------------------------------------
-    # WELCOME
-    # --------------------------------------------------------
-
-    if message_type == "welcome":
-
-        print(
-            "\nSERVER:",
-            data.get("message")
-        )
-
-    # --------------------------------------------------------
-    # LOGIN
-    # --------------------------------------------------------
-
-    elif message_type == "login_success":
-
-        print(
-            "\nĐăng nhập thành công!"
-        )
-
-        print(
-            "Username:",
-            data.get("username")
-        )
-
-    elif message_type == "login_failed":
-
-        print(
-            "\nĐăng nhập thất bại:",
-            data.get("message")
-        )
-
-    # --------------------------------------------------------
-    # ROOM CREATED
-    # --------------------------------------------------------
-
-    elif message_type == "room_created":
-
-        print(
-            "\nĐã tạo phòng:",
-            data.get("room_id")
-        )
-
-    # --------------------------------------------------------
-    # JOIN ROOM
-    # --------------------------------------------------------
-
-    elif message_type == "joined_room":
-
-        print(
-            "\n",
-            data.get("message")
-        )
-
-    # --------------------------------------------------------
-    # PLAYER JOIN
-    # --------------------------------------------------------
-
-    elif message_type == "player_joined":
-
-        print(
-            "\n[ROOM]",
-            data.get("player"),
-            "đã tham gia phòng."
-        )
-
-    # --------------------------------------------------------
-    # PLAYER LEFT
-    # --------------------------------------------------------
-
-    elif message_type == "player_left":
-
-        print(
-            "\n[ROOM]",
-            data.get("player"),
-            "đã rời phòng."
-        )
-
-    # --------------------------------------------------------
-    # ROOM UPDATE
-    # --------------------------------------------------------
-
-    elif message_type == "room_update":
-
-        room = data.get(
-            "room"
-        )
-
-        print(
-            "\n========== ROOM =========="
-        )
-
-        print(
-            "Room ID:",
-            room.get("room_id")
-        )
-
-        print(
-            "Players:",
-            room.get("players")
-        )
-
-        print(
-            "Status:",
-            room.get("status")
-        )
-
-        print(
-            "=========================="
-        )
-
-    # --------------------------------------------------------
-    # ROOM LIST
-    # --------------------------------------------------------
-
-    elif message_type == "room_list":
-
-        rooms = data.get(
-            "rooms",
-            []
-        )
-
-        print(
-            "\n========== ROOM LIST =========="
-        )
-
-        if not rooms:
-
-            print(
-                "Hiện chưa có phòng."
-            )
-
-        else:
-
-            for room in rooms:
-
-                print(
-                    f"Room {room['room_id']} | "
-                    f"Players: {room['players']} | "
-                    f"Status: {room['status']}"
-                )
-
-        print(
-            "==============================="
-        )
-
-    # --------------------------------------------------------
-    # SUDOKU MOVE
-    # --------------------------------------------------------
-
-    elif message_type == "move":
-
-        print(
-            "\n[MOVE]",
-            data.get("player"),
-            "điền",
-            data.get("value"),
-            "vào",
-            f"({data.get('row')},"
-            f"{data.get('col')})"
-        )
-
-    # --------------------------------------------------------
-    # CHAT
-    # --------------------------------------------------------
-
-    elif message_type == "chat":
-
-        print(
-            f"\n[CHAT] "
-            f"{data.get('player')}: "
-            f"{data.get('message')}"
-        )
-
-    # --------------------------------------------------------
-    # PONG
-    # --------------------------------------------------------
-
-    elif message_type == "pong":
-
-        print(
-            "\nServer đang hoạt động."
-        )
-
-    # --------------------------------------------------------
-    # ERROR
-    # --------------------------------------------------------
-
-    elif message_type == "error":
-
-        print(
-            "\n[ERROR]",
-            data.get("message")
-        )
-
-    # --------------------------------------------------------
-    # UNKNOWN
-    # --------------------------------------------------------
-
-    else:
-
-        print(
-            "\n[SERVER]",
-            data
-        )
-
-
-# ============================================================
-# LOGIN
-# ============================================================
-
-def login():
-
-    global username
-
-    while True:
-
-        name = input(
-            "\nNhập username: "
-        ).strip()
-
-        if not name:
-
-            print(
-                "Username không được rỗng."
-            )
-
-            continue
-
-        send_json({
-            "type": "login",
-            "username": name
-        })
-
-        # Đợi người dùng kiểm tra
-        # kết quả đăng nhập từ Server
-        username = name
-
-        break
-
-
-# ============================================================
-# HIỂN THỊ MENU
-# ============================================================
-
-def show_menu():
-
-    print("\n")
-    print("=" * 40)
-    print("          SUDOKU CLIENT")
-    print("=" * 40)
-
-    print("1. Xem danh sách phòng")
+messages = []
+room = None
+username = ""
+
+def clear():
+    os.system("cls" if os.name == "nt" else "clear")
+
+def show():
+    clear()
+    print("=" * 55)
+    print("                 SUDOKU CLIENT")
+    print("=" * 55)
+    print(f"User: {username or '-'}    Room: {room or '-'}")
+    print("\n[ MENU ]")
+    print("1. Xem phòng")
     print("2. Tạo phòng")
     print("3. Tham gia phòng")
     print("4. Rời phòng")
-    print("5. Gửi nước đi Sudoku")
+    print("5. Gửi nước đi")
     print("6. Chat")
     print("7. Ping Server")
     print("8. Thoát")
+    print("\n[ SERVER ]")
+    print("-" * 55)
+    for msg in messages[-8:]:
+        print(msg)
+    print("-" * 55)
 
-    print("=" * 40)
+def send(data):
+    sock.sendall((json.dumps(data, ensure_ascii=False) + "\n").encode())
 
+def handle(data):
+    global username, room
 
-# ============================================================
-# MENU
-# ============================================================
+    t = data.get("type")
 
-def menu():
+    if t == "login_success":
+        username = data.get("username", username)
+        messages.append(f"[LOGIN] Đăng nhập thành công: {username}")
 
+    elif t == "room_created":
+        room = data.get("room_id")
+        messages.append(f"[ROOM] Đã tạo phòng: {room}")
+
+    elif t == "joined_room":
+        room = data.get("room_id", room)
+        messages.append(f"[ROOM] {data.get('message', 'Đã tham gia phòng.')}")
+
+    elif t == "left_room":
+        room = None
+        messages.append("[ROOM] Đã rời phòng.")
+
+    elif t == "room_list":
+        rooms = data.get("rooms", [])
+        if not rooms:
+            messages.append("[ROOM] Hiện chưa có phòng.")
+        else:
+            messages.append("[ROOM] Danh sách phòng:")
+            for r in rooms:
+                messages.append(
+                    f"  Room {r.get('room_id')} | "
+                    f"{r.get('players', [])} | {r.get('status', '')}"
+                )
+
+    elif t == "player_joined":
+        messages.append(f"[ROOM] {data.get('player')} đã tham gia.")
+
+    elif t == "player_left":
+        messages.append(f"[ROOM] {data.get('player')} đã rời phòng.")
+
+    elif t == "move":
+        messages.append(
+            f"[MOVE] {data.get('player')} -> "
+            f"({data.get('row')},{data.get('col')}) = {data.get('value')}"
+        )
+
+    elif t == "chat":
+        messages.append(
+            f"[CHAT] {data.get('player')}: {data.get('message')}"
+        )
+
+    elif t == "pong":
+        messages.append("[PING] Server đang hoạt động.")
+
+    else:
+        messages.append(f"[SERVER] {data.get('message', data)}")
+
+def receive():
     global running
+    buffer = ""
 
     while running:
+        try:
+            data = sock.recv(4096)
+            if not data:
+                break
 
-        show_menu()
+            buffer += data.decode()
 
-        choice = input(
-            "Chọn chức năng: "
-        ).strip()
+            while "\n" in buffer:
+                line, buffer = buffer.split("\n", 1)
+                if line.strip():
+                    handle(json.loads(line))
+                    show()
+        except Exception:
+            break
 
-        # ----------------------------------------------------
-        # ROOM LIST
-        # ----------------------------------------------------
+def ask(text):
+    show()
+    return input(f"\n> {text}").strip()
+
+def main():
+    global running
+
+    try:
+        sock.connect((HOST, PORT))
+    except Exception as e:
+        print(f"Không thể kết nối Server: {e}")
+        return
+
+    threading.Thread(target=receive, daemon=True).start()
+
+    # Đăng nhập
+    global username
+    username = ask("Username: ")
+    send({"type": "login", "username": username})
+
+    while running:
+        choice = ask("Chọn [1-8]: ")
 
         if choice == "1":
-
-            send_json({
-                "type": "room_list"
-            })
-
-        # ----------------------------------------------------
-        # CREATE ROOM
-        # ----------------------------------------------------
+            send({"type": "room_list"})
 
         elif choice == "2":
-
-            send_json({
-                "type": "create_room"
-            })
-
-        # ----------------------------------------------------
-        # JOIN ROOM
-        # ----------------------------------------------------
+            send({"type": "create_room"})
 
         elif choice == "3":
-
             try:
-
-                room_id = int(
-                    input(
-                        "Nhập Room ID: "
-                    )
-                )
-
-                send_json({
-                    "type": "join_room",
-                    "room_id": room_id
-                })
-
+                room_id = int(ask("Room ID: "))
+                send({"type": "join_room", "room_id": room_id})
             except ValueError:
-
-                print(
-                    "Room ID phải là số."
-                )
-
-        # ----------------------------------------------------
-        # LEAVE ROOM
-        # ----------------------------------------------------
+                messages.append("[ERROR] Room ID phải là số.")
 
         elif choice == "4":
-
-            send_json({
-                "type": "leave_room"
-            })
-
-        # ----------------------------------------------------
-        # MOVE
-        # ----------------------------------------------------
+            send({"type": "leave_room"})
 
         elif choice == "5":
-
             try:
+                row = int(ask("Row (0-8): "))
+                col = int(ask("Column (0-8): "))
+                value = int(ask("Value (1-9): "))
 
-                row = int(
-                    input(
-                        "Row (0-8): "
-                    )
-                )
-
-                col = int(
-                    input(
-                        "Column (0-8): "
-                    )
-                )
-
-                value = int(
-                    input(
-                        "Value (1-9): "
-                    )
-                )
-
-                send_json({
+                send({
                     "type": "move",
                     "row": row,
                     "col": col,
                     "value": value
                 })
-
             except ValueError:
-
-                print(
-                    "Dữ liệu không hợp lệ."
-                )
-
-        # ----------------------------------------------------
-        # CHAT
-        # ----------------------------------------------------
+                messages.append("[ERROR] Dữ liệu không hợp lệ.")
 
         elif choice == "6":
-
-            message = input(
-                "Tin nhắn: "
-            )
-
-            send_json({
-                "type": "chat",
-                "message": message
-            })
-
-        # ----------------------------------------------------
-        # PING
-        # ----------------------------------------------------
+            text = ask("Tin nhắn: ")
+            send({"type": "chat", "message": text})
 
         elif choice == "7":
-
-            send_json({
-                "type": "ping"
-            })
-
-        # ----------------------------------------------------
-        # EXIT
-        # ----------------------------------------------------
+            send({"type": "ping"})
 
         elif choice == "8":
-
             running = False
-
             try:
-
-                send_json({
-                    "type": "leave_room"
-                })
-
-            except Exception:
+                send({"type": "leave_room"})
+            except:
                 pass
-
-            try:
-
-                client.close()
-
-            except Exception:
-                pass
-
-            print(
-                "Đã thoát Client."
-            )
-
+            sock.close()
+            print("Đã thoát Client.")
             break
 
         else:
-
-            print(
-                "Lựa chọn không hợp lệ."
-            )
-
-
-# ============================================================
-# START CLIENT
-# ============================================================
-
-def start_client():
-
-    global client
-
-    client = socket.socket(
-        socket.AF_INET,
-        socket.SOCK_STREAM
-    )
-
-    try:
-
-        client.connect(
-            (
-                SERVER_IP,
-                SERVER_PORT
-            )
-        )
-
-        print(
-            f"Đã kết nối Server "
-            f"{SERVER_IP}:{SERVER_PORT}"
-        )
-
-    except ConnectionRefusedError:
-
-        print(
-            "Không thể kết nối Server."
-        )
-
-        return
-
-    except Exception as e:
-
-        print(
-            "Lỗi kết nối:",
-            e
-        )
-
-        return
-
-    # Thread nhận dữ liệu
-    receiver = threading.Thread(
-        target=receive_messages,
-        daemon=True
-    )
-
-    receiver.start()
-
-    # Đăng nhập
-    login()
-
-    # Menu
-    menu()
-
-
-# ============================================================
-# MAIN
-# ============================================================
+            messages.append("[ERROR] Chọn từ 1 đến 8.")
 
 if __name__ == "__main__":
-
-    start_client()
+    main()
