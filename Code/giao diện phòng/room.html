@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Phòng Sudoku</title>
+    <link rel="stylesheet"
+          href="room.css">
+</head>
+<body>
+    <div class="room-page">
+        <div class="room-box">
+            <h1>Sudoku room</h1>
+            <div class="room-code">
+                <p>Mã phòng</p>
+                <strong id="roomId">
+                    #578
+                </strong>
+            </div>
+            <div class="players">
+                <div class="player">
+                    <div class="avatar">
+                        N
+                    </div>
+                    <div>
+                        <strong id="playerName">
+                            Người chơi
+                        </strong>
+                        <p>Bạn</p>
+                    </div>
+                </div>
+                <div class="vs">
+                    VS
+                </div>
+                <div class="player">
+                    <div class="avatar">
+                        ?
+                    </div>
+                    <div>
+                        <strong>
+                            Đang chờ...
+                        </strong>
+                        <p>
+                            Đối thủ
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="waiting">
+                <div class="loading">
+                </div>
+                <h2>
+                    Đang chờ đối thủ
+                </h2>
+                <p>
+                    Trận đấu sẽ bắt đầu khi
+                    đủ 2 người chơi......
+                </p>
+            </div>
+            <button
+                class="leave"
+                onclick="leaveRoom()">
+                ← Rời phòng
+            </button>
+        </div>
+    </div>
+    <script>
+        const username =
+            localStorage.getItem("username");
+        const roomId =
+            localStorage.getItem("roomId");
+        if (username) {
+            document
+                .getElementById("playerName")
+                .innerText = username;
+        }
+        if (roomId) {
+           document
+                .getElementById("roomId")
+                .innerText =
+                "#" + roomId;
+        }
+        function leaveRoom() {
+            window.location.href =
+                "lobby.html";
+        }
+    </script>
+</body>
+</html>
