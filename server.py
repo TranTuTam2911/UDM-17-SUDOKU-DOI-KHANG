@@ -2,11 +2,12 @@ import socket
 import threading
 import time
 
-from game_logic import SudokuMatch, generate_puzzle
+from backtrack import generate_puzzle
+from game_logic import SudokuMatch
 
 
 class SudokuServer:
-    def __init__(self, host="127.0.0.1", port=9000, time_limit=180):
+    def __init__(self, host="127.0.0.1", port=9000, time_limit=30):
         self.host = host
         self.port = port
         self.time_limit = time_limit

@@ -31,42 +31,96 @@ class SudokuClient:
             except OSError:
                 break
 
+    @staticmethod
+    def parse_server_message(message):
+        message = message.strip()
+        if not message:
+            return {"type": "", "payload": ""}
+
+        parts = message.split("|")
+        message_type = parts[0]
+
+        if message_type == "MATCH_START":
+            return {
+                "type": message_type,
+                "first_player": parts[1],
+                "opponent": parts[2],
+                "time_limit": parts[3],
+                "board": "|".join(parts[4:]),
+            }
+
+        if message_type == "TURN":
+            return {
+                "type": message_type,
+                "current_player": parts[1],
+                "remaining_time": parts[2],
+                "board": "|".join(parts[3:]),
+            }
+
+        if message_type == "STATE":
+            return {
+                "type": message_type,
+                "player_name": parts[1],
+                "row": parts[2],
+                "col": parts[3],
+                "value": parts[4],
+                "score": parts[5],
+                "current_player": parts[6],
+                "board": "|".join(parts[7:]),
+            }
+
+        if message_type == "RESULT":
+            return {
+                "type": message_type,
+                "winner": parts[1] if len(parts) > 1 else "",
+                "reason": parts[2] if len(parts) > 2 else "",
+            }
+
+        if message_type in {"INVALID", "WELCOME"}:
+            return {
+                "type": message_type,
+                "payload": "|".join(parts[1:]),
+            }
+
+        return {"type": message_type, "raw": message}
+
     def _handle_message(self, message):
         print(f"[SERVER] {message}")
-        parts = message.split("|")
+        parsed = self.parse_server_message(message)
+        message_type = parsed.get("type")
 
-        if parts[0] == "MATCH_START":
+        if message_type == "MATCH_START":
             print("Trận đấu bắt đầu. Lượt chơi của người đầu tiên sẽ được server quyết định.")
-            print(f"Đối thủ: {parts[2]} | Thời gian tối đa: {parts[3]}s")
-            self.print_board(parts[4])
-        elif parts[0] == "TURN":
-            current_player = parts[1]
-            remaining_time = parts[2]
-            board_data = parts[3]
+            print(f"Đối thủ: {parsed['opponent']} | Thời gian tối đa: {parsed['time_limit']}s")
+            self.print_board(parsed["board"])
+        elif message_type == "TURN":
+            current_player = parsed["current_player"]
+            remaining_time = parsed["remaining_time"]
+            board_data = parsed["board"]
             print(f"Lượt hiện tại: {current_player} | Thời gian còn lại: {remaining_time}s")
             self.print_board(board_data)
             if current_player == self.name:
                 self.send_move()
             else:
                 print("Đợi lượt đối thủ...")
-        elif parts[0] == "STATE":
-            player_name = parts[1]
-            row = parts[2]
-            col = parts[3]
-            value = parts[4]
-            score = parts[5]
-            current_player = parts[6]
-            board_data = parts[7]
+        elif message_type == "STATE":
+            player_name = parsed["player_name"]
+            row = parsed["row"]
+            col = parsed["col"]
+            value = parsed["value"]
+            score = parsed["score"]
+            current_player = parsed["current_player"]
+            board_data = parsed["board"]
             print(f"{player_name} đã đi vào ô ({row}, {col}) với giá trị {value} | Điểm: {score} | Lượt tiếp theo: {current_player}")
             self.print_board(board_data)
-        elif parts[0] == "INVALID":
-            print(f"Nước đi không hợp lệ: {parts[1]}")
-        elif parts[0] == "RESULT":
-            print(f"Kết quả: {parts[1]} thắng ({parts[2]})")
+        elif message_type == "INVALID":
+            print(f"Nước đi không hợp lệ: {parsed['payload']}")
+        elif message_type == "RESULT":
+            print(f"Kết quả: {parsed['winner']} thắng ({parsed['reason']})")
             self.running = False
             self.sock.close()
-        elif parts[0] == "WELCOME":
-            print(f"Kết nối thành công với server. Bạn là: {parts[1]}")
+        elif message_type == "WELCOME":
+            print(f"Kết nối thành công với server. Bạn là: {parsed['payload']}")
 
     def print_board(self, board_data):
         try:
