@@ -13,6 +13,7 @@ class SudokuClient:
         self.sock.sendall(f"NAME|{self.name}\n".encode())
 
         self.running = True
+        self.buffer = ""
         self.receiver = threading.Thread(target=self._receive_loop, daemon=True)
         self.receiver.start()
 
@@ -22,14 +23,19 @@ class SudokuClient:
                 data = self.sock.recv(4096)
                 if not data:
                     break
-                for message in data.decode(errors="ignore").splitlines():
-                    if not message:
-                        continue
-                    self._handle_message(message)
+                self._process_buffer(data.decode(errors="ignore"))
             except socket.timeout:
                 continue
             except OSError:
                 break
+
+    def _process_buffer(self, chunk):
+        self.buffer += chunk
+        while "\n" in self.buffer:
+            line, self.buffer = self.buffer.split("\n", 1)
+            message = line.strip()
+            if message:
+                self._handle_message(message)
 
     @staticmethod
     def parse_server_message(message):
@@ -46,7 +52,9 @@ class SudokuClient:
                 "first_player": parts[1],
                 "opponent": parts[2],
                 "time_limit": parts[3],
-                "board": "|".join(parts[4:]),
+                "score1": parts[4],
+                "score2": parts[5],
+                "board": "|".join(parts[6:]),
             }
 
         if message_type == "TURN":
@@ -54,7 +62,9 @@ class SudokuClient:
                 "type": message_type,
                 "current_player": parts[1],
                 "remaining_time": parts[2],
-                "board": "|".join(parts[3:]),
+                "score1": parts[3],
+                "score2": parts[4],
+                "board": "|".join(parts[5:]),
             }
 
         if message_type == "STATE":
@@ -66,7 +76,9 @@ class SudokuClient:
                 "value": parts[4],
                 "score": parts[5],
                 "current_player": parts[6],
-                "board": "|".join(parts[7:]),
+                "score1": parts[7],
+                "score2": parts[8],
+                "board": "|".join(parts[9:]),
             }
 
         if message_type == "RESULT":
@@ -74,6 +86,8 @@ class SudokuClient:
                 "type": message_type,
                 "winner": parts[1] if len(parts) > 1 else "",
                 "reason": parts[2] if len(parts) > 2 else "",
+                "score1": parts[3] if len(parts) > 3 else "",
+                "score2": parts[4] if len(parts) > 4 else "",
             }
 
         if message_type in {"INVALID", "WELCOME"}:

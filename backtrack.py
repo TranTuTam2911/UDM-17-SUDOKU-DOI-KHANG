@@ -44,12 +44,18 @@ def generate_full_board():
 
 def generate_puzzle(empties=40):
     """Tạo một board Sudoku có ô trống để người chơi điền."""
-    board = generate_full_board()
-    puzzle = [row[:] for row in board]
+    puzzle, _ = generate_puzzle_with_solution(empties)
+    return puzzle
+
+
+def generate_puzzle_with_solution(empties=40):
+    """Tạo một board Sudoku có ô trống và lưu lại đáp án đúng."""
+    solution = generate_full_board()
+    puzzle = [row[:] for row in solution]
     positions = [(r, c) for r in range(9) for c in range(9)]
     random.shuffle(positions)
 
     for r, c in positions[:empties]:
         puzzle[r][c] = 0
 
-    return puzzle
+    return puzzle, solution

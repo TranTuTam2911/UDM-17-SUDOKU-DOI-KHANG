@@ -4,7 +4,7 @@ import time
 class SudokuMatch:
     """Quản lý trận đấu Sudoku 2 người chơi."""
 
-    def __init__(self, board, players, time_limit=180):
+    def __init__(self, board, players, time_limit=180, solution=None):
         self.board = [list(row) for row in board]
         self.players = list(players)
         self.time_limit = int(time_limit)
@@ -15,6 +15,7 @@ class SudokuMatch:
         self.remaining_time = {player: self.time_limit for player in self.players}
         self.history = []
         self.last_turn_started = time.monotonic()
+        self.solution = [list(row) for row in solution] if solution is not None else None
 
     @property
     def current_player(self):
@@ -35,6 +36,10 @@ class SudokuMatch:
             return False
         if self.board[row][col] != 0:
             return False
+
+        if self.solution is not None:
+            if value != self.solution[row][col]:
+                return False
 
         for i in range(9):
             if self.board[row][i] == value:
