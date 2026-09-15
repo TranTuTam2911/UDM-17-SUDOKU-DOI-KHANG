@@ -259,7 +259,7 @@ def toggle_password(self):
         self.show_password = False
     else:
         self.password_entry.config(show="")
-        self.eye_button.config(text="🙈")
+        self.eye_button.config(text="")
         self.show_password = True
 def forgot_password(self):
     messagebox.showinfo(
@@ -286,7 +286,7 @@ def forgot_password(self):
         )
         tk.Label(
             header,
-            text=f"👤 {self.username}",
+            text=f" {self.username}",
             bg=CARD,
             fg=TEXT,
             font=("Arial", 12)
