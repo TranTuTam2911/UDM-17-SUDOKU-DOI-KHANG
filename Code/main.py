@@ -77,20 +77,20 @@ class SudokuApp:
             cursor="hand2"
         )
    def show_login(self):
-    self.clear_screen()
-    card = tk.Frame(
-        self.root,
-        bg=CARD,
-        width=500,
-        height=560
-    )
-    card.place(
-        relx=0.5,
-        rely=0.5,
-        anchor="center"
+       self.clear_screen()
+       card = tk.Frame(
+            self.root,
+            bg=CARD,
+            width=500,
+            height=560
+       )
+       card.place(
+           relx=0.5,
+           rely=0.5,
+           anchor="center"
     )
     card.pack_propagate(False)
-tk.Label(
+    tk.Label(
         card,
         text="SUDOKU",
         bg=CARD,
@@ -132,7 +132,7 @@ tk.Label(
         ipady=10,
         pady=(8, 18)
     )
-tk.Label(
+    tk.Label(
         card,
         text="Mật khẩu",
         bg=CARD,
@@ -250,11 +250,9 @@ tk.Checkbutton(
         f"Người chơi: {username}"
     )
     self.show_lobby()
-       
-    def show_lobby(self):
 def toggle_password(self):
     if self.show_password:
-        self.password_entry.config(show="*")
+        self.password_entry.config(show="🙈")
         self.eye_button.config(text="👁")
         self.show_password = False
     else:
@@ -266,6 +264,7 @@ def forgot_password(self):
         "Quên mật khẩu",
         "Vui lòng liên hệ quản trị viên để được hỗ trợ."
     )
+    def show_lobby(self):
         self.clear_screen()
         header = tk.Frame(
             self.root,
@@ -376,7 +375,7 @@ def forgot_password(self):
             text=(
                 f'Mã phòng: #{room["id"]}   |   '
                 f'Cấp độ: {room["level"]}   |   '
-                f'👤 {room["player"]}'
+                f' {room["player"]}'
             ),
             bg=CARD,
             fg=SUB_TEXT,
