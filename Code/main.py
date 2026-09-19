@@ -76,194 +76,197 @@ class SudokuApp:
             relief="flat",
             cursor="hand2"
         )
-   def show_login(self):
-       self.clear_screen()
-       card = tk.Frame(
+    def show_login(self):
+        self.clear_screen()
+        card = tk.Frame(
             self.root,
             bg=CARD,
             width=500,
             height=560
-       )
-       card.place(
-           relx=0.5,
-           rely=0.5,
-           anchor="center"
-    )
-    card.pack_propagate(False)
-    tk.Label(
-        card,
-        text="SUDOKU",
-        bg=CARD,
-        fg=PRIMARY,
-        font=("Arial", 32, "bold")
-    ).pack(pady=(40, 5))
-    tk.Label(
-        card,
-        text="ĐỐI KHÁNG",
-        bg=CARD,
-        fg=TEXT,
-        font=("Arial", 22, "bold")
-    ).pack()
-    tk.Label(
-        card,
-        text="Đăng nhập để bắt đầu",
-        bg=CARD,
-        fg=SUB_TEXT,
-        font=("Arial", 12)
-    ).pack(pady=(8, 25))
- tk.Label(
-        card,
-        text="Tên người chơi",
-        bg=CARD,
-        fg=TEXT,
-        font=("Arial", 11, "bold")
-    ).pack(anchor="w", padx=55)
-    self.username_entry = tk.Entry(
-        card,
-        bg=CARD2,
-        fg=TEXT,
-        insertbackground=TEXT,
-        font=("Arial", 13),
-        relief="flat"
-    )
-    self.username_entry.pack(
-        padx=55,
-        fill="x",
-        ipady=10,
-        pady=(8, 18)
-    )
-    tk.Label(
-        card,
-        text="Mật khẩu",
-        bg=CARD,
-        fg=TEXT,
-        font=("Arial", 11, "bold")
-    ).pack(anchor="w", padx=55)
-    password_frame = tk.Frame(
-        card,
-        bg=CARD
-    )
-    password_frame.pack(
-        padx=55,
-        fill="x",
-        pady=(8, 8)
-    )
-
-    self.password_entry = tk.Entry(
-        password_frame,
-        bg=CARD2,
-        fg=TEXT,
-        insertbackground=TEXT,
-        font=("Arial", 13),
-        relief="flat",
-        show="*"
-    )
-
-    self.password_entry.pack(
-        side="left",
-        fill="x",
-        expand=True,
-        ipady=10
-    )
-    self.eye_button = tk.Button(
-        password_frame,
-        text="👁",
-        command=self.toggle_password,
-        bg=CARD2,
-        fg=TEXT,
-        activebackground=PRIMARY,
-        activeforeground=TEXT,
-        relief="flat",
-        font=("Arial", 11),
-        width=4
-    )
-
-    self.eye_button.pack(
-        side="right",
-        ipady=6
-    )
-tk.Checkbutton(
-        card,
-        text="Lưu mật khẩu",
-        variable=self.remember_password,
-        bg=CARD,
-        fg=SUB_TEXT,
-        activebackground=CARD,
-        activeforeground=TEXT,
-        selectcolor=CARD2,
-        font=("Arial", 10)
-    ).pack(
-        anchor="w",
-        padx=55,
-        pady=(5, 0)
-    )
- tk.Button(
-        card,
-        text="Quên mật khẩu?",
-        command=self.forgot_password,
-        bg=CARD,
-        fg=PRIMARY,
-        activebackground=CARD,
-        activeforeground=PRIMARY_HOVER,
-        relief="flat",
-        font=("Arial", 10, "underline"),
-        cursor="hand2"
-    ).pack(
-        anchor="e",
-        padx=55,
-        pady=(0, 15)
-    )
- self.button(
-        card,
-        "ĐĂNG NHẬP",
-        self.login,
-        25
-    ).pack(pady=5)
-   def login(self):
-    username = self.username_entry.get().strip()
-    password = self.password_entry.get()
-    if username == "":
-        messagebox.showwarning(
-            "Thông báo",
-            "Vui lòng nhập tên người chơi!"
         )
-        return
-    if password == "":
-        messagebox.showwarning(
-            "Thông báo",
-            "Vui lòng nhập mật khẩu!"
+        card.place(
+            relx=0.5,
+            rely=0.5,
+            anchor="center"
         )
-        return
-    self.username = username
-    self.password = password
+        card.pack_propagate(False)
+        tk.Label(
+            card,
+            text="SUDOKU",
+            bg=CARD,
+            fg=PRIMARY,
+            font=("Arial", 32, "bold")
+        ).pack(pady=(40, 5))
+        tk.Label(
+            card,
+            text="ĐỐI KHÁNG",
+            bg=CARD,
+            fg=TEXT,
+            font=("Arial", 22, "bold")
+        ).pack()
+        tk.Label(
+            card,
+            text="Đăng nhập để bắt đầu",
+            bg=CARD,
+            fg=SUB_TEXT,
+            font=("Arial", 12)
+        ).pack(pady=(8, 25))
+        tk.Label(
+            card,
+            text="Tên người chơi",
+            bg=CARD,
+            fg=TEXT,
+            font=("Arial", 11, "bold")
+        ).pack(anchor="w", padx=55)
+        self.username_entry = tk.Entry(
+            card,
+            bg=CARD2,
+            fg=TEXT,
+            insertbackground=TEXT,
+            font=("Arial", 13),
+            relief="flat"
+        )
+        self.username_entry.pack(
+            padx=55,
+            fill="x",
+            ipady=10,
+            pady=(8, 18)
+        )
+        tk.Label(
+            card,
+            text="Mật khẩu",
+            bg=CARD,
+            fg=TEXT,
+            font=("Arial", 11, "bold")
+        ).pack(anchor="w", padx=55)
+        password_frame = tk.Frame(
+            card,
+            bg=CARD
+        )
+        password_frame.pack(
+            padx=55,
+            fill="x",
+            pady=(8, 8)
+        )
 
-    print("Username:", username)
-    print("Password:", password)
-    print(
-        "Lưu mật khẩu:",
-        self.remember_password.get()
-    )
+        self.password_entry = tk.Entry(
+            password_frame,
+            bg=CARD2,
+            fg=TEXT,
+            insertbackground=TEXT,
+            font=("Arial", 13),
+            relief="flat",
+            show="*"
+        )
 
-    messagebox.showinfo(
-        "Đăng nhập",
-        f"Đăng nhập thành công!\n\n"
-        f"Người chơi: {username}"
-    )
-    self.show_lobby()
-def toggle_password(self):
-    if self.show_password:
-        self.password_entry.config(show="🙈")
-        self.eye_button.config(text="👁")
-        self.show_password = False
-    else:
-        self.password_entry.config(show="")
-        self.eye_button.config(text="")
-        self.show_password = True
-def forgot_password(self):
-    messagebox.showinfo(
-        "Quên mật khẩu",
-        "Vui lòng liên hệ quản trị viên để được hỗ trợ."
-    )
+        self.password_entry.pack(
+            side="left",
+            fill="x",
+            expand=True,
+            ipady=10
+        )
+        self.eye_button = tk.Button(
+            password_frame,
+            text="👁",
+            command=self.toggle_password,
+            bg=CARD2,
+            fg=TEXT,
+            activebackground=PRIMARY,
+            activeforeground=TEXT,
+            relief="flat",
+            font=("Arial", 11),
+            width=4
+        )
+
+        self.eye_button.pack(
+            side="right",
+            ipady=6
+        )
+        tk.Checkbutton(
+            card,
+            text="Lưu mật khẩu",
+            variable=self.remember_password,
+            bg=CARD,
+            fg=SUB_TEXT,
+            activebackground=CARD,
+            activeforeground=TEXT,
+            selectcolor=CARD2,
+            font=("Arial", 10)
+        ).pack(
+            anchor="w",
+            padx=55,
+            pady=(5, 0)
+        )
+        tk.Button(
+            card,
+            text="Quên mật khẩu?",
+            command=self.forgot_password,
+            bg=CARD,
+            fg=PRIMARY,
+            activebackground=CARD,
+            activeforeground=PRIMARY_HOVER,
+            relief="flat",
+            font=("Arial", 10, "underline"),
+            cursor="hand2"
+        ).pack(
+            anchor="e",
+            padx=55,
+            pady=(0, 15)
+        )
+        self.button(
+            card,
+            "ĐĂNG NHẬP",
+            self.login,
+            25
+        ).pack(pady=5)
+
+    def login(self):
+        username = self.username_entry.get().strip()
+        password = self.password_entry.get()
+        if username == "":
+            messagebox.showwarning(
+                "Thông báo",
+                "Vui lòng nhập tên người chơi!"
+            )
+            return
+        if password == "":
+            messagebox.showwarning(
+                "Thông báo",
+                "Vui lòng nhập mật khẩu!"
+            )
+            return
+        self.username = username
+        self.password = password
+
+        print("Username:", username)
+        print("Password:", password)
+        print(
+            "Lưu mật khẩu:",
+            self.remember_password.get()
+        )
+
+        messagebox.showinfo(
+            "Đăng nhập",
+            f"Đăng nhập thành công!\n\n"
+            f"Người chơi: {username}"
+        )
+        self.show_lobby()
+
+    def toggle_password(self):
+        if self.show_password:
+            self.password_entry.config(show="🙈")
+            self.eye_button.config(text="👁")
+            self.show_password = False
+        else:
+            self.password_entry.config(show="")
+            self.eye_button.config(text="")
+            self.show_password = True
+
+    def forgot_password(self):
+        messagebox.showinfo(
+            "Quên mật khẩu",
+            "Vui lòng liên hệ quản trị viên để được hỗ trợ."
+        )
     def show_lobby(self):
         self.clear_screen()
         header = tk.Frame(
